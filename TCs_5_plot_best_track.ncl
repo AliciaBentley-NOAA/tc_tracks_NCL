@@ -17,40 +17,25 @@ print(" START SCRIPT ")
 print("**************")
 print(" ")
 
-cur_year = 2021                 
-int_time = 2021070600
-model = "ukmet"             ; can be "gefs", "ec", "ukmet", etc.
 TCname = "elsa"
+model = "gefs"
+cur_year = 2021
+int_time = "2021070600"
 dir_out_web = "/home/people/emc/www/htdocs/users/Alicia.Bentley/test/ppp/"
 
-;minlat = 5.
-;maxlat = 45.
-;minlon = -100.
-;maxlon = -40.
+minlat = 5.
+maxlat = 45.
+minlon = -100.
+maxlon = -40.
 
-minlat = 12.5
-maxlat = 42.5
-minlon = -97.5
-maxlon = -52.5
+;minlat = 12.5
+;maxlat = 42.5
+;minlon = -97.5
+;maxlon = -52.5
 
 ;----------------------------------------------------------------------------------------------
 
-dist = "150"
-
-if model .eq. "gefs" then
-	number = todouble(31)     ; number of members
-end if
-if model .eq. "ec" then
-        number = todouble(51)     ; number of members
-end if
-if model .eq. "cmc" then
-	number = todouble(21)
-end if
-if model .eq. "ukmet" then
-	number = todouble(36)
-end if 
-
-name = model+"_track_density_"+int_time+"_"+TCname
+name = "best_track_"+TCname
 
 dir_out = "./"
 ; scp *.png abentley@emcrzdm:/home/people/emc/www/htdocs/users/Alicia.Bentley/fv3gfs/retros/images/lane/.
@@ -60,13 +45,14 @@ count2 = fil->count(:,:)
 
 count = todouble(count2 - 0)
 
-count = (count/number)*100
+count = (count/31)*100
 
 do d=0,1
 count=smth9(count,.5,.25,False)
 end do
 
 copy_VarCoords(count2,count)
+count(:,:) = 2
 
 printMinMax(count,True)
 
@@ -108,7 +94,7 @@ res@gsnRightStringOrthogonalPosF = .011
 res@gsnStringFontHeightF = .013
 
 res@mpFillOn = True
-res@mpLandFillColor = "gray75"  ;"grey75"
+res@mpLandFillColor = "gray83"  ;"grey75"
 ;res@mpInlandWaterFillColor = "lightsteelblue2"
 ;res@mpOceanFillColor = "lightsteelblue2"
 res@mpInlandWaterFillColor = "white"
@@ -121,7 +107,7 @@ res@mpOutlineOn = True
 res@mpGeophysicalLineColor = "grey12"
 res@mpNationalLineColor = res@mpGeophysicalLineColor
 res@mpUSStateLineColor = res@mpGeophysicalLineColor
-res@mpGeophysicalLineThicknessF = 8
+res@mpGeophysicalLineThicknessF = 4
 res@mpNationalLineThicknessF = 3
 res@mpUSStateLineThicknessF = 3
 
@@ -138,8 +124,10 @@ res@cnMaxLevelValF = 99
 res@gsnSpreadColors = True
 res@gsnSpreadColorStart = 8
 res@gsnSpreadColorEnd = 128
+res@cnConstFLabelOn = False
 
 res@lbAutoManage = False                   ; Label Bar Information
+res@lbLabelBarOn = False
 res@pmLabelBarOrthogonalPosF = .02  
 res@pmLabelBarHeightF = 0.08
 res@pmLabelBarWidthF = 0.41
@@ -218,10 +206,10 @@ res@tmYLLabelFontHeightF = .011
 res@tmYROn = False
 res@tmXTOn = False
 
-res@gsnLeftString = "Model: ("+model+") Initialized:  "+int_time
+res@gsnLeftString = "Storm: "+TCname
 res@gsnLeftStringOrthogonalPosF = .0075 
 res@gsnLeftStringFontHeightF = .008
-res@gsnRightString = "Probability (%) that TC center passes within "+dist+" km"
+res@gsnRightString = "Best Track Map"
 res@gsnRightStringOrthogonalPosF = .0075
 res@gsnRightStringFontHeightF = .008
 
@@ -235,247 +223,6 @@ res@mpOutlineDrawOrder = "Draw"
 res@mpGridAndLimbDrawOrder = "PostDraw"
 
 plot = gsn_csm_contour_map(wks, count, res) 
-
-;************************************************************************
-;************************************************************************
-;************************************************************************
-;************************************************************************
-
-; Read in file with cyclone tracks
-
-track_url = "./"
-trk_read = asciiread(track_url+model+"_"+int_time+"_"+TCname+".csv",-1,"string")
-delim = ", "
-nfields = str_fields_count(trk_read, delim)
-;print("nfields: "+nfields)
-
-print("Obtaining data from file of unknown length...")
-
-yyyy_arr_temp = str_get_field(trk_read, 1, delim)
-mm_arr_temp = str_get_field(trk_read, 2, delim)
-dd_arr_temp = str_get_field(trk_read, 3, delim)
-hh_arr_temp = str_get_field(trk_read, 4, delim)
-mslp_arr_temp = str_get_field(trk_read, 5, delim)
-rlat_arr_temp = str_get_field(trk_read, 6, delim)
-rlon_arr_temp = str_get_field(trk_read, 7, delim)
-wind_arr_temp = str_get_field(trk_read, 8,delim)
-cyc_arr_temp = str_get_field(trk_read, 9,delim)
-
-;printVarSummary(yyyy_arr_temp)
-
-iz = ind(yyyy_arr_temp .eq. cur_year)
-;print(iz)
-
-rlat_arr = todouble(rlat_arr_temp(iz))
-rlon_arr = todouble(rlon_arr_temp(iz))
-cyc_arr = todouble(cyc_arr_temp(iz))
-
-print(cyc_arr)
-
-;************************************************************************
-
-tkres = True
-tkres@gsLineColor = "white"
-tkres@gsLineThicknessF = 3
-
-length = doubletoint(dimsizes(cyc_arr))
-line3 = new(length,graphic)
-
-l_lat := new(length,double,0)
-l_lon := new(length,double,0)
-previous_cyc = todouble(-1)
-
-start_position = 0
-spot = 0
-cyc_num = 1
-
-;printVarSummary(cyc_arr)
-
-;***********************************************************
-
-startpoint = 0
-toolong = 0
-
-endvar = dimsizes(cyc_arr)-1
-
-do i = 1,endvar
-  previous2_cyc = todouble(-2)
-  previous_cyc = cyc_arr(i-1)
-  current_cyc = cyc_arr(i)
-  l_lat(i-1) = rlat_arr(i-1)
-  l_lon(i-1) = rlon_arr(i-1)
-  l_lat(i) = rlat_arr(i)
-  l_lon(i) = rlon_arr(i)
-  
-	if (current_cyc .ne. previous_cyc) .or. (i .eq. endvar) then
-		print(" ")
-   		print("******Starting cyclone "+previous_cyc+"******")
-   		cyc_num = cyc_num + 1
-   		if i .eq. endvar then
-   			endpoint = i-1
-   		else
-   		    endpoint = i-2
-   		end if
-   		
-   		print("startpoint: "+startpoint)
-   		print("endpoint: "+endpoint)
-
-  		do h = startpoint,endpoint
-  	  		spot = spot + 1
-;  			print("Line Drawn: "+spot)
-  			l_lat_plot := (/l_lat(h),l_lat(h+1)/)
-    		l_lon_plot := (/l_lon(h),l_lon(h+1)/)
-;    		print("last lat: "+l_lat(h+1))
-    		
-			line3(spot-1) = gsn_add_polyline(wks,plot,l_lon_plot,l_lat_plot,tkres)
-			
-		end do ; end h
-		
-		startpoint = i
-	end if
-	
-	previous_cyc = cyc_arr(i)
-	previous2_cyc = cyc_arr(i-1)
-end do  ; end plot tracks 
-
-;************************************************************************
-;************************************************************************
-;************************************************************************
-;************************************************************************
-
-track_url = "./"
-trk_read := asciiread(track_url+model+"_det_mean_"+int_time+"_"+TCname+".csv",-1,"string")
-
-delim = ", "
-nfields := str_fields_count(trk_read, delim)
-;print("nfields: "+nfields)
-
-print("Obtaining data from file of unknown length...")
-
-yyyy_arr_temp := str_get_field(trk_read, 1, delim)
-mm_arr_temp := str_get_field(trk_read, 2, delim)
-dd_arr_temp := str_get_field(trk_read, 3, delim)
-hh_arr_temp := str_get_field(trk_read, 4, delim)
-mslp_arr_temp := str_get_field(trk_read, 5, delim)
-rlat_arr_temp := str_get_field(trk_read, 6, delim)
-rlon_arr_temp := str_get_field(trk_read, 7, delim)
-wind_arr_temp := str_get_field(trk_read, 8,delim)
-cyc_arr_temp := str_get_field(trk_read, 9,delim)
-
-;printVarSummary(yyyy_arr_temp)
-
-iz := ind(yyyy_arr_temp .eq. cur_year)
-;print(iz)
-
-hh_arr := todouble(hh_arr_temp(iz))
-rlat_arr := todouble(rlat_arr_temp(iz))
-rlon_arr := todouble(rlon_arr_temp(iz))
-cyc_arr := todouble(cyc_arr_temp(iz))
-
-print(cyc_arr)
-
-print(" ")
-print("Lat/Lons successfully collected from file")
-
-;************************************************************************
-
-tkres = True
-tkres@gsLineColor = "red3"
-tkres@gsLineThicknessF = 14
-
-dres = True
-dres@gsMarkerColor = "red3"
-dres@gsMarkerIndex = 1
-dres@gsMarkerSizeF = 0.022
-
-timres = True
-timres@txFontHeightF = .008 
-
-length := doubletoint(dimsizes(cyc_arr))
-line2 = new(length,graphic)
-dot3 = new(length,graphic)
-dot4 = new(length,graphic)
-
-l_lat := new(length,double,0)
-l_lon := new(length,double,0)
-previous_cyc = todouble(-1)
-
-start_position = 0
-spot = 0
-cyc_num = 1
-
-;***********************************************************
-
-startpoint = 0
-toolong = 0
-
-endvar = dimsizes(cyc_arr)-1
-
-do i = 1,endvar
-  previous2_cyc = todouble(-2)
-  previous_cyc = cyc_arr(i-1)
-  current_cyc = cyc_arr(i)
-  l_lat(i-1) = rlat_arr(i-1)
-  l_lon(i-1) = rlon_arr(i-1)
-  l_lat(i) = rlat_arr(i)
-  l_lon(i) = rlon_arr(i)
- 
-print("current_cyc: "+current_cyc+" | previous_cyc: "+previous_cyc)
- 
-	if (current_cyc .ne. previous_cyc) .or. (i .eq. endvar) then
-		print(" ")
-   		print("******Starting cyclone "+previous_cyc+"******")
-   		cyc_num = cyc_num + 1
-   		if i .eq. endvar then
-   			endpoint = i-1
-   		else
-   		    endpoint = i-2
-   		end if
-   		
-   		print("startpoint: "+startpoint)
-   		print("endpoint: "+endpoint)
-
-  		do h = startpoint,endpoint
-  	  		spot = spot + 1
-;  			print("Line Drawn: "+spot)
-  			l_lat_plot := (/l_lat(h),l_lat(h+1)/)
-    		l_lon_plot := (/l_lon(h),l_lon(h+1)/)
-;    		print("last lat: "+l_lat(h+1))
-    
-print("cyc_num: "+cyc_num)
-	
-    		if cyc_num .eq. 2 then
-        		tkres@gsLineColor = "blue2"
-;			tkres@gsLineThicknessF = 16
-				dres@gsMarkerColor = tkres@gsLineColor    		
-    		end if
-    		if cyc_num .eq. 3 then
-        		tkres@gsLineColor = "red2"
-;			tkres@gsLineThicknessF = 13
-				dres@gsMarkerColor = tkres@gsLineColor    		
-    		end if
-
-
-			line2(spot-1) = gsn_add_polyline(wks,plot,l_lon_plot,l_lat_plot,tkres)
-			
-			if hh_arr(h) .eq. 0 .or. hh_arr(h) .eq. 12 then
-;			print("hh: "+hh_arr(h))
-			dot3(spot-1) = gsn_add_polymarker(wks,plot,l_lon(h),l_lat(h),dres)			
-			end if
-			
-			if (h .eq. endpoint) .and. (hh_arr(h) .eq. 6 .or. hh_arr(h) .eq. 18) then
-			    print("At endpoint!")
-				dot4(spot-1) = gsn_add_polymarker(wks,plot,l_lon(h+1),l_lat(h+1),dres)
-			end if
-			
-		end do ; end h
-		
-		startpoint = i
-	end if
-	
-	previous_cyc = cyc_arr(i)
-	previous2_cyc = cyc_arr(i-1)
-end do  ; end plot tracks 
 
 ;************************************************************************
 ;************************************************************************
@@ -532,7 +279,7 @@ dres@gsMarkerIndex = 1
 dres@gsMarkerSizeF = 0.020
 
 timres = True
-timres@txFontHeightF = .008 
+timres@txFontHeightF = .012 
 
 length := doubletoint(dimsizes(cyc_arr))
 line = new(length,graphic)
@@ -619,7 +366,8 @@ frame(wks)
 
 ;********************************************
 
-system("convert -trim "+name+".png "+name+"_zoom2.png")
+system("convert -trim "+name+".png "+name+".png")
+;system("convert -trim "+name+".png "+name+"_ocean.png")
 ;system ("scp "+name+".png abentley@emcrzdm.ncep.noaa.gov:"+dir_out_web+".")
 
 print(" ")

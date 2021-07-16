@@ -1,4 +1,4 @@
-;;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>;;
+;;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>;a
 ;;
 ;; Creates GEFS TC track .csv files from a-deck .dat file
 ;;
@@ -18,9 +18,9 @@ print(" START SCRIPT ")
 print("**************")
 print(" ")
 
-int_time = "2020082412"
-TCname = "marco"
-file_load = "aal142020"         ; do not include the .dat at the end
+int_time = "2021070812"
+TCname = "elsa"
+file_load = "aal052021"         ; do not include the .dat at the end
 
 ;-------------------------------------------------------------------------
 
@@ -32,28 +32,28 @@ print("int_time: "+int_time)
 
 line_num = 0
 line_num2 = 0
-outlines := new((/861/),"string")
+outlines := new((/3000/),"string")
 outlines2 := new((/3000/),"string")
 
-do ens = 0,22,1   				; loop through all ensemble members
+do ens = 0,32,1   				; loop through all ensemble members
 
 	if (ens .eq. 0) then
 	    mem = "AC00"
 	end if
 
-	if (ens .ge. 1 .and. ens .le. 9) then
+	if (ens .ge. 1 .and. ens .le. 10) then
 		mem = "AP0"+ens
 	end if
 
-	if (ens .ge. 10 .and. ens .le. 20) then
+	if (ens .ge. 10 .and. ens .le. 30) then
 		mem = "AP"+ens
 	end if
 
-        if (ens .eq. 21) then 
+        if (ens .eq. 31) then 
             mem = "AEMN"
         end if  
 
-        if (ens .eq. 22) then
+        if (ens .eq. 32) then
             mem = "AVNO"
         end if
   
@@ -84,13 +84,13 @@ do ens = 0,22,1   				; loop through all ensemble members
         line = year+", "+month+", "+day+", "+hour+", "+mslp+", "+lat+", "+lon+", "+wind+", "+ensemble
 ;   		print("line: "+line)
    		
-   		if ens .le. 20 then
+   		if ens .le. 30 then
    			print("line_num: "+line_num)
 			outlines(line_num) = line
 			line_num = line_num + 1
 		end if
 
-                if ens .ge. 21 then
+                if ens .ge. 31 then
  ;                       print("line_num2: "+line_num2)
                         outlines2(line_num2) = line
                         line_num2 = line_num2 + 1

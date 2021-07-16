@@ -18,9 +18,9 @@ print(" START SCRIPT ")
 print("**************")
 print(" ")
 
-int_time = "2020081800"
-TCname = "marco"
-file_load = "aal142020"
+int_time = "2021070812"
+TCname = "elsa"
+file_load = "aal052021"
 
 ;------------------------------------------------------------------------
 
@@ -36,7 +36,11 @@ outlines2 := new((/3000/),"string")
 
 do ens = 0,52,1   				; loop through all ensemble members
 
-if ens .ne. 56 then                
+print("ens: "+ens)
+
+if ens .ne. 100 then                           ; use this if statement when all ensembles members are available (100>>52)
+;if ens .ne. 48 then 			       ; use this line if there is a missing ensemble member in early cycles
+					       ; add one to the bad ensemble member
 	
 	ens_num = ens_num + 1
 
