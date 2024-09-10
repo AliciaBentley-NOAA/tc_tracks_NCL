@@ -18,9 +18,9 @@ print(" START SCRIPT ")
 print("**************")
 print(" ")
 
-cur_year = 2020
-int_time = 2020082312
-TCname = "marco"
+cur_year = 2024
+int_time = 2024062912
+TCname = "beryl"
 
 ;-------------------------------------------------------------------------
 
@@ -101,6 +101,7 @@ if (ens .eq. 0) .and. (spot .eq. 0) then
         dspot = 0
 
 	do fill = 0,33-1,1
+;        do fill = 0,9-1,1
 		str_yyyy = ut_string(cdate,"%Y")
 		str_mm = ut_string(cdate,"%N")		
 		str_dd = ut_string(cdate,"%D")
@@ -136,16 +137,18 @@ ens_mean!0 = "var"
 ens_mean!1 = "fcst"
 printVarSummary(ens_mean)
 
-;print(ens_mean(0,:))
+print(ens_mean(0,:))
 
-
+;do j = 0,9-1,1
 do j = 0,33-1,1
 
+if (.not.ismissing(ens_mean(0,j))) then
         line = date_arr(0,j)+", "+date_arr(1,j)+", "+date_arr(2,j)+", "+date_arr(3,j)+", "+ens_mean(0,j)+", "+ens_mean(1,j)+", "+ens_mean(2,j)+", "+ens_mean(3,j)+", 36"
         print("line: "+line)
         print("line_num: "+line_num)
         outlines(line_num) = line
         line_num = line_num + 1
+end if
 
 end do
 

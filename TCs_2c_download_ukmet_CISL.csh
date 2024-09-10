@@ -37,7 +37,7 @@ $opt $opt1="$opt2" https://rda.ucar.edu/cgi-bin/login
 set opt1 = "-N --load-cookies auth.rda_ucar_edu"
 set opt2 = "$opt $opt1 http://rda.ucar.edu/data/ds330.3/"
 set filelist = ( \
-  egrr/2020/20200823/z_tigge_c_egrr_20200823120000_mogreps_glob_prod_etctr_glo.xml.gz \
+  egrr/2024/20240708/z_tigge_c_egrr_20240708000000_mogreps_glob_prod_etctr_glo.xml.gz \
 #  egrr/2018/20181007/z_tigge_c_egrr_20181007120000_mogreps_glob_prod_etctr_glo.xml.gz \
 #  egrr/2018/20181008/z_tigge_c_egrr_20181008000000_mogreps_glob_prod_etctr_glo.xml.gz \
 #  egrr/2018/20181008/z_tigge_c_egrr_20181008120000_mogreps_glob_prod_etctr_glo.xml.gz \

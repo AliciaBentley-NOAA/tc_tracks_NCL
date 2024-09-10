@@ -18,9 +18,9 @@ print(" START SCRIPT ")
 print("**************")
 print(" ")
 
-int_time = "2020081500"
-file_load = "bal142020"       ; do not include the .dat at the end
-TCname = "marco"
+int_time = "2024062600"
+file_load = "bal022024"       ; do not include the .dat at the end
+TCname = "beryl"
 
 ;-----------------------------------------------------------
 

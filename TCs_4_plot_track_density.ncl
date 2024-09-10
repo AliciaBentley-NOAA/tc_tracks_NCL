@@ -17,21 +17,21 @@ print(" START SCRIPT ")
 print("**************")
 print(" ")
 
-cur_year = 2021                 
-int_time = 2021070600
-model = "ukmet"             ; can be "gefs", "ec", "ukmet", etc.
-TCname = "elsa"
-dir_out_web = "/home/people/emc/www/htdocs/users/Alicia.Bentley/test/ppp/"
+cur_year = 2024                 
+int_time = 2024070500
+model = "ukmet"             ; can be "gefs", "ec", "ukmet", "cmc"
+TCname = "beryl"
+dir_out_web = "/home/people/emc/www/htdocs/users/Alicia.Bentley/beryl/"
 
-;minlat = 5.
-;maxlat = 45.
-;minlon = -100.
-;maxlon = -40.
+minlat = 5.
+maxlat = 45.
+minlon = -110.
+maxlon = -50.
 
-minlat = 12.5
-maxlat = 42.5
-minlon = -97.5
-maxlon = -52.5
+;minlat = 12.5
+;maxlat = 42.5
+;minlon = -97.5
+;maxlon = -52.5
 
 ;----------------------------------------------------------------------------------------------
 
@@ -619,7 +619,7 @@ frame(wks)
 
 ;********************************************
 
-system("convert -trim "+name+".png "+name+"_zoom2.png")
+system("convert -trim "+name+".png "+name+".png")
 ;system ("scp "+name+".png abentley@emcrzdm.ncep.noaa.gov:"+dir_out_web+".")
 
 print(" ")

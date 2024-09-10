@@ -17,16 +17,16 @@ print(" START SCRIPT ")
 print("**************")
 print(" ")
 
-TCname = "elsa"
-model = "gefs"
-cur_year = 2021
-int_time = "2021070600"
+TCname = "beryl"
+cur_year = 2024
+int_time = "2024062600"
+underlay = "2024070600"
 dir_out_web = "/home/people/emc/www/htdocs/users/Alicia.Bentley/test/ppp/"
 
 minlat = 5.
-maxlat = 45.
+maxlat = 48.
 minlon = -100.
-maxlon = -40.
+maxlon = -23.
 
 ;minlat = 12.5
 ;maxlat = 42.5
@@ -38,9 +38,9 @@ maxlon = -40.
 name = "best_track_"+TCname
 
 dir_out = "./"
-; scp *.png abentley@emcrzdm:/home/people/emc/www/htdocs/users/Alicia.Bentley/fv3gfs/retros/images/lane/.
+; scp *.png abentley@emcrzdm.ncep.noaa.gov:/home/people/emc/www/htdocs/users/Alicia.Bentley/test/ppp/.
 
-fil = addfile(model+"_track_density_"+int_time+".nc","r")
+fil = addfile("gefs_track_density_"+underlay+".nc","r")
 count2 = fil->count(:,:)
 
 count = todouble(count2 - 0)

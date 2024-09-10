@@ -13,10 +13,10 @@ load "$NCARG_ROOT/lib/ncarg/nclscripts/csm/contributed.ncl"
 
 begin
 
-cur_year = 2020                 ; YYYY
-int_time = 2020082312		; YYYYMMDDHH		
-model = "ukmet"                	; OPTIONS: "gefs", "ec", "ukmet"
-TCname = "marco"
+cur_year = 2024                 ; YYYY
+int_time = 2024062912		; YYYYMMDDHH		
+model = "ukmet"                	; OPTIONS: "gefs", "ec", "cmc", "ukmet"
+TCname = "beryl"
 
 ;------------------------------------------------------------------------------
 
@@ -100,7 +100,7 @@ print(" ")
 ;***************************************************************************************
 
 ;; Loop through all of the tracks
-;print(nTracks)
+print(nTracks)
 
 do iTrack=0,toint(nTracks)
 
